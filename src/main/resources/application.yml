@@ -1,0 +1,18 @@
+xdoc:
+  enable: true  # 是否启用
+  title: 测试模块  #
+  version: v1.0
+  sourcePath: src\main\java\com\api\showDoc\controller\
+  url: http://test.xingms.com:9000/server/index.php?s=/api/item/updateByApi
+  apiKey: f9cfb7aee8bcad3ba2dc9c32eb55d84c23617
+  apiToken: 3d4f12ddb25245c716b4a53089cc4afb7636
+# Tomcat
+server:
+    tomcat:
+        uri-encoding: UTF-8
+        max-threads: 1000
+        min-spare-threads: 30
+    port: 8080
+spring:
+    resources: # 指定静态资源的路径
+        static-locations: classpath:/xdoc/
