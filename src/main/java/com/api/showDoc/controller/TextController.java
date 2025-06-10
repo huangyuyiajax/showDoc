@@ -7,17 +7,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 测试标题
  * @author 黄育益
- * @description
- * @date 2025-06-09 19:52:01
-*/
+ * @version 1.0
+ * @date 2025/6/10 13:55
+ * @description TODO
+ */
 @Controller
 @RequestMapping("/text")
 public class TextController {
 
     /**
-     * 跳转到接口文档页面
+     * @author 黄育益
+     * @date 2025/6/10 13:54
+     * @description TODO
      */
     @GetMapping
 //    @IgnoreApi // 加上次注解 ，不生产文档
@@ -26,5 +28,15 @@ public class TextController {
         return "redirect:showdoc.html";
     }
 
+    /**
+     * @author 黄育益
+     * @date 2025/6/10 14:09
+     * @description TODO
+     */
+    @GetMapping("index")
+    @RequiresPermissions("base:sysregion:index")
+    public String index2(String param,String param2) {
+        return "redirect:showdoc.html";
+    }
 
 }

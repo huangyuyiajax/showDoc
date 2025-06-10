@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * XDoc的Spring Web入口
  *
- * @author hyy
+ * @author huangyuyi
  *
  */
 @RequestMapping("xdoc")

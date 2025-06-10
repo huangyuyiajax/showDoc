@@ -6,7 +6,7 @@ import com.api.javaParser.xdoc.model.ObjectInfo;
 /**
  * 针对@see注释标签进行封装,返回@see上注释的类信息
  * <p>
- * Created by leaf on 2017/3/4.
+ * Created by huangyuyi on 2017/3/4.
  */
 public class SeeTagImpl extends DocTag<ObjectInfo> {
 

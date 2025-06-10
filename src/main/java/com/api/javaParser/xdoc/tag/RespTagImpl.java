@@ -7,7 +7,7 @@ import com.api.javaParser.xdoc.utils.Constant;
 /**
  * 针对@Resp注释的内容封装
  *
- * Created by leaf on 2017/3/12 0012.
+ * Created by huangyuyi on 2017/3/12 0012.
  */
 @Data
 public class RespTagImpl extends DocTag<String> {

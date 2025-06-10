@@ -7,7 +7,7 @@ import com.api.javaParser.xdoc.utils.Constant;
 
 /**
  * 针对@param的转换器
- * @author leaf
+ * @author huangyuyi
  * @date 2017/3/4
  */
 public class ParamTagConverter extends DefaultJavaParserTagConverterImpl {

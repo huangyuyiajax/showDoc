@@ -31,7 +31,7 @@ import java.util.List;
  * 基于开源JavaParser实现的解析
  * <p>
  *
- * @author leaf
+ * @author huangyuyi
  * @date 2017/4/1 0001
  */
 public class JavaParserDocTagResolver implements DocTagResolver {

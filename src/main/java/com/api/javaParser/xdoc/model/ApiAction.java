@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 接口信息,一个接口类里面会有多个接口,每个接口都抽象成ApiAction
  *
- * @author leaf
+ * @author huangyuyi
  * @date 2017-03-03 11:09
  */
 @Data

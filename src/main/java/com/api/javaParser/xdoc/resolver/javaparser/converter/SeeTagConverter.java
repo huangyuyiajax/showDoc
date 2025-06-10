@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * 针对@see的转换器
  *
- * @author leaf
+ * @author huangyuyi
  * @date 2017/3/4
  */
 public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {

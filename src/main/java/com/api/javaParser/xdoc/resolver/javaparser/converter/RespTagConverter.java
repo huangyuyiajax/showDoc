@@ -8,7 +8,7 @@ import com.api.javaParser.xdoc.tag.SeeTagImpl;
 
 /**
  * 针对@resp的转换器
- * @author leaf
+ * @author huangyuyi
  * @date 2017/3/12 0012
  */
 public class RespTagConverter extends ParamTagConverter {

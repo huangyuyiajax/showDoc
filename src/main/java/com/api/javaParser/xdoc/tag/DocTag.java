@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * 针对注释标签
  *
- * Created by leaf on 2017/3/4.
+ * Created by huangyuyi on 2017/3/4.
  */
 public abstract class DocTag<T> {
 

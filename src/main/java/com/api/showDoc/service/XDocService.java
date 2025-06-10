@@ -66,7 +66,7 @@ public class XDocService {
                 SpringApiModule springApiModule = (SpringApiModule)apiModule;
                 List<ShowdocModel> showdocModels = new ArrayList();
                 for(ApiAction apiAction:apiActions){
-                    String page_title = !"".equals(apiAction.getComment())?apiAction.getComment():(apiModule.getType().getCanonicalName()+"."+apiAction.getName());//页面标题。请保证其唯一。（或者，当页面处于目录下时，请保证页面标题在该目录下唯一）。当页面标题不存在时，showdoc将会创建此页面。当页面标题存在时，将用page_content更新其内容
+                    String page_title = !"".equals(apiAction.getComment())?apiAction.getComment():(apiModule.getType().getCanonicalName()+"."+apiAction.getName());
                     try{
                         ShowdocModel showdocModel = new ShowdocModel();
                         showdocModel.setPageTitle(page_title);
@@ -87,15 +87,15 @@ public class XDocService {
                                 case "@description":
                                     showdocModel.setDescription(String.valueOf(docTag.getValues()));
                                     break;
-                                case "@param":
+                                case "@param"://单个参数
                                     ParamTagImpl paramTag = (ParamTagImpl)docTag;
                                     paramTags.add(paramTag);
                                     break;
-                                case "@see":
+                                case "@see"://实体参数
                                     SeeTagImpl seeTag = (SeeTagImpl)docTag;
                                     fieldInfos.addAll(seeTag.getValues().getFieldInfos());
                                     break;
-                                case "@params":
+                                case "@params"://多个参数
                                     SeeTagImpl seeTag1 = (SeeTagImpl)docTag;
                                     paramFieldInfos.addAll(seeTag1.getValues().getFieldInfos());
                                     break;
@@ -127,7 +127,6 @@ public class XDocService {
                         }
                         showdocModel.setUrl(urls);
                         showdocModels.add(showdocModel);
-                        System.out.println(showdocModel);
                     } catch (Exception e) {
                         log.error(apiAction.getName()+"接口生成文档失败", e);
                     }
