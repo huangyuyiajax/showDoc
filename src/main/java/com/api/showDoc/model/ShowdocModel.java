@@ -16,6 +16,15 @@ import java.util.*;
  */
 public class ShowdocModel {
 
+
+    /**
+     * 页面标题
+     */
+    private String pageTitle;
+    /**
+     * 方法名
+     */
+    private String funtionName;
     /**
      * 简要描述|Y:22
      * 黄玉一
@@ -82,6 +91,22 @@ public class ShowdocModel {
     private Model model;
 
     private List<Model> models;
+
+    public String getPageTitle() {
+        return pageTitle;
+    }
+
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
+    public String getFuntionName() {
+        return funtionName;
+    }
+
+    public void setFuntionName(String funtionName) {
+        this.funtionName = funtionName;
+    }
 
     public String getDescription() {
         return description;

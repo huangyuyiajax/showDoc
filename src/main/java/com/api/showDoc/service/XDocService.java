@@ -11,17 +11,14 @@ import com.api.javaParser.xdoc.model.ApiModule;
 import com.api.javaParser.xdoc.model.FieldInfo;
 import com.api.javaParser.xdoc.tag.*;
 import com.api.javaParser.xdoc.utils.JsonFormatUtils;
+import com.api.showDoc.model.ResultModel;
 import com.api.showDoc.model.ShowdocModel;
-import com.api.util.GroupTemplateHelper;
-import com.api.util.HttpHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +42,10 @@ public class XDocService {
      *
      * @return
      */
-    public Object apis(HttpServletRequest request, HttpServletResponse response) {
+    public Object apis() {
+        if (!xDocProperties.isEnable()) {
+            return "没打开开关";
+        }
         String path = xDocProperties.getSourcePath();
         if (StringUtils.isBlank(path)) {
             path = ".";//默认为当前目录
@@ -56,14 +56,21 @@ public class XDocService {
             XDoc xDoc = new XDoc(paths, new SpringWebFramework());
             apiDoc = xDoc.resolve();
             List<ApiModule> apiModules = apiDoc.getApiModules();//所有API模块   相当一个controller类
-            Integer s_number = 1;//可选，页面序号。默认是99。数字越小，该页面越靠前
+            List<ResultModel> list = new ArrayList<>();
             for(ApiModule apiModule:apiModules){
-                String comment =apiModule.getComment();//业务模块的描述
+                ResultModel resultModel = new ResultModel();
+                String comment = apiModule.getComment();//业务模块的描述
+                resultModel.setComment(comment);
+                resultModel.setControName(apiModule.getType().getSimpleName());
                 List<ApiAction> apiActions = apiModule.getApiActions();//此业务模块下有哪些接口  相当一个controller类 下一个方法
                 SpringApiModule springApiModule = (SpringApiModule)apiModule;
+                List<ShowdocModel> showdocModels = new ArrayList();
                 for(ApiAction apiAction:apiActions){
+                    String page_title = !"".equals(apiAction.getComment())?apiAction.getComment():(apiModule.getType().getCanonicalName()+"."+apiAction.getName());//页面标题。请保证其唯一。（或者，当页面处于目录下时，请保证页面标题在该目录下唯一）。当页面标题不存在时，showdoc将会创建此页面。当页面标题存在时，将用page_content更新其内容
                     try{
                         ShowdocModel showdocModel = new ShowdocModel();
+                        showdocModel.setPageTitle(page_title);
+                        showdocModel.setFuntionName(apiAction.getName());
                         List<ParamTagImpl> paramTags = new ArrayList<ParamTagImpl>();
                         showdocModel.setParamTag(paramTags);
                         List<FieldInfo> fieldInfos = new ArrayList<FieldInfo>();
@@ -119,20 +126,20 @@ public class XDocService {
                             }
                         }
                         showdocModel.setUrl(urls);
-                        String cat_name = xDocProperties.getTitle()+"/"+comment.trim();//可选参数。当页面文档处于目录下时，请传递目录名。当目录名不存在时，showdoc会自动创建此目录。需要创建多层目录的时候请用斜杆隔开，例如 “一层/二层/三层”
-                        String page_title = !"".equals(apiAction.getComment())?apiAction.getComment():(apiModule.getType().getCanonicalName()+"."+apiAction.getName());//页面标题。请保证其唯一。（或者，当页面处于目录下时，请保证页面标题在该目录下唯一）。当页面标题不存在时，showdoc将会创建此页面。当页面标题存在时，将用page_content更新其内容
-                        String page_content = GroupTemplateHelper.getInstance().showdocTpl(showdocModel);//页面内容，可传递markdown格式的文本或者html源码
-                        HttpHelper.post(xDocProperties.getUrl(),"api_key="+xDocProperties.getApiKey()+"&api_token="+xDocProperties.getApiToken()+"&page_title="+page_title+"&s_number="+(s_number++)+"&page_content="+page_content+"&cat_name="+cat_name,"POST");
+                        showdocModels.add(showdocModel);
+                        System.out.println(showdocModel);
                     } catch (Exception e) {
                         log.error(apiAction.getName()+"接口生成文档失败", e);
                     }
+                    resultModel.setList(showdocModels);
                 }
+                list.add(resultModel);
             }
+            return list;
         } catch (Exception e) {
             log.error("start up XDoc error", e);
             return "执行失败"+e;
         }
-        return "执行完毕";
     }
 
 }
