@@ -42,6 +42,11 @@ public class ApiAction {
      */
     private List<DocTag> docTags;
 
+    /**
+     * 方法参数的解析
+     */
+    private List<DocTag> paramTags;
+
     public String getTitle() {
         return title;
     }
@@ -80,5 +85,13 @@ public class ApiAction {
 
     public void setDocTags(List<DocTag> docTags) {
         this.docTags = docTags;
+    }
+
+    public List<DocTag> getParamTags() {
+        return paramTags;
+    }
+
+    public void setParamTags(List<DocTag> paramTags) {
+        this.paramTags = paramTags;
     }
 }
