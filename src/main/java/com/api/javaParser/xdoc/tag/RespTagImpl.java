@@ -1,15 +1,13 @@
 package com.api.javaParser.xdoc.tag;
 
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import com.api.javaParser.xdoc.utils.Constant;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 针对@Resp注释的内容封装
  *
  * Created by huangyuyi on 2017/3/12 0012.
  */
-@Data
 public class RespTagImpl extends DocTag<String> {
 
     /**

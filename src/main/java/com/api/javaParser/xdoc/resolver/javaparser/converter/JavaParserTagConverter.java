@@ -18,4 +18,6 @@ public interface JavaParserTagConverter<T extends String> {
      * @return DocTag对象
      */
     DocTag converter(T o) ;
+
+    DocTag converter(T o,Integer i) ;
 }

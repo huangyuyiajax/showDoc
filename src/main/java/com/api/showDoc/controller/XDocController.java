@@ -1,11 +1,11 @@
 package com.api.showDoc.controller;
 
+import com.api.javaParser.xdoc.resolver.IgnoreApi;
 import com.api.showDoc.service.XDocService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author huangyuyi
  *
  */
+@IgnoreApi// 加上次注解 ，不生产文档
 @RequestMapping("xdoc")
+@RestController
 public class XDocController {
-
-    private Logger log = LoggerFactory.getLogger(XDocController.class);
 
     @Autowired
     private XDocService xDocService;

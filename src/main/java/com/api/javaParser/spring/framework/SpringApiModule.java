@@ -1,6 +1,5 @@
 package com.api.javaParser.spring.framework;
 
-import lombok.Data;
 import com.api.javaParser.xdoc.model.ApiModule;
 
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 /**
  * Created by huangyuyi on 2017/3/4.
  */
-@Data
 public class SpringApiModule extends ApiModule {
 
     /**
@@ -49,4 +47,6 @@ public class SpringApiModule extends ApiModule {
     public void setJson(boolean json) {
         this.json = json;
     }
+
+
 }

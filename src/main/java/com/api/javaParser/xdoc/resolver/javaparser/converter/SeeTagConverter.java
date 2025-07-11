@@ -15,10 +15,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Valid;
 import java.io.FileInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -30,9 +31,12 @@ import java.util.*;
 public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
 
     private Logger log = LoggerFactory.getLogger(SeeTagConverter.class);
-
     @Override
     public DocTag converter(String comment) {
+        return  converter(comment,0);
+    }
+    @Override
+    public DocTag converter(String comment,Integer i) {
         DocTag docTag = super.converter(comment);
         String value = (String) docTag.getValues();
         String [] paths =new String[]{value};
@@ -64,7 +68,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
             String text = cu.getComment().isPresent() ? CommentUtils.parseCommentText(cu.getComment().get().getContent()) : "";
 
             Map<String, String> commentMap = this.analysisFieldComments(returnClassz);
-            fields.addAll(this.analysisFields(returnClassz, commentMap));
+            fields.addAll(this.analysisFields(returnClassz, commentMap,i));
         }
 
         ObjectInfo objectInfo = new ObjectInfo();
@@ -106,6 +110,11 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
                         if (n.getComment().isPresent()) {
                             comment = n.getComment().get().getContent();
                         }
+                        if (StringUtils.isBlank(comment)) {
+                            if (n.getVariable(0).getComment().isPresent()) {
+                                comment = n.getVariable(0).getComment().get().getContent();
+                            }
+                        }
 
                         if (name.contains("=")) {
                             name = name.substring(0, name.indexOf("=")).trim();
@@ -123,11 +132,15 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
         return commentMap;
     }
 
-    private List<FieldInfo> analysisFields(Class classz, Map<String, String> commentMap) {
+    private List<FieldInfo> analysisFields(Class classz, Map<String, String> commentMap,Integer i) {
 
         List<FieldInfo> fields = new ArrayList<FieldInfo>();
         Field[] fiel =  classz.getDeclaredFields();
         for(Field propertyDescriptor:fiel){
+            //排除掉class属性
+            if ("class".equals(propertyDescriptor.getName())) {
+                continue;
+            }
             Annotation[] annotation = propertyDescriptor.getDeclaredAnnotations();
             boolean require = false;
             for(Annotation a:annotation){
@@ -142,10 +155,6 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
                     }
                 }
             }
-            //排除掉class属性
-            if ("class".equals(propertyDescriptor.getName())) {
-                continue;
-            }
             FieldInfo field = new FieldInfo();
             field.setType(propertyDescriptor.getType());
             field.setSimpleTypeName(propertyDescriptor.getType().getSimpleName());
@@ -153,8 +162,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
             String comment = commentMap.get(propertyDescriptor.getName());
             if (StringUtils.isBlank(comment)) {
                 field.setComment("");
-                field.setRequire(false);
-                fields.add(field);
+                require = false;
             } else {
                 if (comment.contains("|")) {
                     int endIndex = comment.lastIndexOf("|" + Constant.YES_ZH);
@@ -174,9 +182,35 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
                 if(field.getValue()==null||"".equals(field.getValue())){
                     field.setValue(comment);
                 }
-                field.setRequire(require);
-                fields.add(field);
             }
+            field.setRequire(require);
+            String returnTypeSimpleNameType = propertyDescriptor.getType().getSimpleName();
+
+            if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)&&i<4){
+                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
+                SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+returnTypeSimpleNameType,i+1);
+                if(tag!=null){
+                    field.setFieldInfos(tag.getValues().getFieldInfos());
+                }
+            }
+            if(Constant.LIST_TYPE.contains(returnTypeSimpleNameType)&&i<4){
+                // 获取泛型参数类型
+                Type genericType = propertyDescriptor.getGenericType();
+                if (genericType instanceof ParameterizedType) {
+                    ParameterizedType pType = (ParameterizedType) genericType;
+                    Type[] actualTypeArgs = pType.getActualTypeArguments();
+                    String entyType = actualTypeArgs[0].getTypeName();
+                    if(!Constant.DATA_TYPE.contains(entyType)){
+                        JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
+                        SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+entyType,i+1);
+                        if(tag!=null){
+                            field.setSimpleTypeName(returnTypeSimpleNameType+"<"+entyType.substring(entyType.lastIndexOf(".")+1)+">");
+                            field.setFieldInfos(tag.getValues().getFieldInfos());
+                        }
+                    }
+                }
+            }
+            fields.add(field);
         }
         return fields;
     }

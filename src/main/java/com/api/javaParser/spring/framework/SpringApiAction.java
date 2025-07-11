@@ -2,7 +2,6 @@ package com.api.javaParser.spring.framework;
 
 import com.api.javaParser.xdoc.model.ApiAction;
 import com.api.javaParser.xdoc.model.ObjectInfo;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.List;
 /**
  * Created by huangyuyi on 2017/3/4.
  */
-@Data
 public class SpringApiAction extends ApiAction {
 
     /**

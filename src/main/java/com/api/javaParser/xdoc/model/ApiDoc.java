@@ -1,6 +1,5 @@
 package com.api.javaParser.xdoc.model;
 
-import lombok.Data;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Map;
 /**
  * Created by huangyuyi on 2018/6/22.
  */
-@Data
 public class ApiDoc {
 
     /**

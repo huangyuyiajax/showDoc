@@ -1,7 +1,6 @@
 package com.api.javaParser.xdoc.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.List;
  * @author huangyuyi
  * @date 2017-03-03 10:32
  */
-@Data
 public class ApiModule {
 
     /**

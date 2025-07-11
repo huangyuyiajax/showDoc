@@ -14,9 +14,11 @@ public class Constant {
     public static final String YES_ZH = "必填";
 
     public static final List<String> TYPE = Arrays.asList("int","short","boolean","Float","float",
-            "double","Long","long","BigDecimal","Integer","Short","Boolean");
+            "double","Long","long","BigDecimal","Integer","Short","Boolean","Double","Time","Date");
+
+    public static final List<String> LIST_TYPE = Arrays.asList("Array","List");
 
     public static final List<String> DATA_TYPE = Arrays.asList("Array","int","short","boolean","Float","float","char","StringBuffer","Text","HashMap","HashSet","Hashtable","Hash",
             "double","Long","long","byte","object","Date","time","BigDecimal","String","Integer","Short","Boolean","Byte","Object","Timestamp","StringBuilder"
-    ,"InputStream","List","Math","Map","Year");
+    ,"InputStream","List","Math","Map","Year","Double","Time","JSONObject","JSONArray");
 }

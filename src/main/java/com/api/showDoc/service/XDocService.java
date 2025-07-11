@@ -1,6 +1,5 @@
 package com.api.showDoc.service;
 
-import com.api.common.XDocProperties;
 import com.api.javaParser.spring.framework.SpringApiAction;
 import com.api.javaParser.spring.framework.SpringApiModule;
 import com.api.javaParser.spring.framework.SpringWebFramework;
@@ -8,7 +7,6 @@ import com.api.javaParser.xdoc.XDoc;
 import com.api.javaParser.xdoc.model.ApiAction;
 import com.api.javaParser.xdoc.model.ApiDoc;
 import com.api.javaParser.xdoc.model.ApiModule;
-import com.api.javaParser.xdoc.model.FieldInfo;
 import com.api.javaParser.xdoc.tag.*;
 import com.api.javaParser.xdoc.utils.JsonFormatUtils;
 import com.api.showDoc.model.ResultModel;
@@ -16,7 +14,7 @@ import com.api.showDoc.model.ShowdocModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,8 +30,11 @@ public class XDocService {
 
     private Logger log = LoggerFactory.getLogger(XDocService.class);
 
-    @Autowired
-    private XDocProperties xDocProperties;
+    @Value("${xDoc:false}")
+    private Boolean xDoc;
+
+    @Value("${xDocPath:}")
+    private String xDocPath;
 
     private static ApiDoc apiDoc;
 
@@ -43,14 +44,14 @@ public class XDocService {
      * @return
      */
     public Object apis() {
-        if (!xDocProperties.isEnable()) {
+        if (!xDoc) {
             return "没打开开关";
         }
-        String path = xDocProperties.getSourcePath();
-        if (StringUtils.isBlank(path)) {
-            path = ".";//默认为当前目录
+        if (StringUtils.isBlank(xDocPath)) {
+            xDocPath = ".";//默认为当前目录
+            System.out.println(xDocPath);
         }
-        List<String> paths = Arrays.asList(path.split(","));
+        List<String> paths = Arrays.asList(xDocPath.split(","));
         log.info("开始解析 XDoc, 路径 path:{}", paths);
         try {
             XDoc xDoc = new XDoc(paths, new SpringWebFramework());
@@ -65,45 +66,39 @@ public class XDocService {
                 List<ApiAction> apiActions = apiModule.getApiActions();//此业务模块下有哪些接口  相当一个controller类 下一个方法
                 SpringApiModule springApiModule = (SpringApiModule)apiModule;
                 List<ShowdocModel> showdocModels = new ArrayList();
+                String canonicalName = apiModule.getType().getCanonicalName();
                 for(ApiAction apiAction:apiActions){
-                    String page_title = !"".equals(apiAction.getComment())?apiAction.getComment():(apiModule.getType().getCanonicalName()+"."+apiAction.getName());
+                    String page_title = StringUtils.isNotBlank(apiAction.getComment())?apiAction.getComment():(canonicalName+"."+apiAction.getName());
                     try{
                         ShowdocModel showdocModel = new ShowdocModel();
                         showdocModel.setPageTitle(page_title);
                         showdocModel.setFuntionName(apiAction.getName());
-                        List<ParamTagImpl> paramTags = new ArrayList<ParamTagImpl>();
-                        showdocModel.setParamTag(paramTags);
-                        List<FieldInfo> fieldInfos = new ArrayList<FieldInfo>();
-                        showdocModel.setFieldInfos(fieldInfos);
-                        List<FieldInfo> paramFieldInfos = new ArrayList<FieldInfo>();
-                        showdocModel.setParamFieldInfos(paramFieldInfos);
-                        List<RespTagImpl> respParam = new ArrayList<RespTagImpl>();
-                        showdocModel.setRespParam(respParam);
                         for(DocTag docTag: apiAction.getDocTags()){
                             switch(docTag.getTagName()){
                                 case "@author":
                                     showdocModel.setAuthor(String.valueOf(docTag.getValues()));
                                     break;
+                                case "@date":
+                                    showdocModel.setDate(String.valueOf(docTag.getValues()));
+                                    break;
                                 case "@description":
                                     showdocModel.setDescription(String.valueOf(docTag.getValues()));
                                     break;
-                                case "@param"://单个参数
+                                case "@param"://入参参数
                                     ParamTagImpl paramTag = (ParamTagImpl)docTag;
-                                    paramTags.add(paramTag);
-                                    break;
-                                case "@see"://实体参数
-                                    SeeTagImpl seeTag = (SeeTagImpl)docTag;
-                                    fieldInfos.addAll(seeTag.getValues().getFieldInfos());
+                                    showdocModel.getParamTag().add(paramTag);
                                     break;
                                 case "@params"://多个参数
                                     SeeTagImpl seeTag1 = (SeeTagImpl)docTag;
-                                    paramFieldInfos.addAll(seeTag1.getValues().getFieldInfos());
+                                    showdocModel.getParamFieldInfos().addAll(seeTag1.getValues().getFieldInfos());
                                     break;
-                                case "@resp":
-                                    respParam.add((RespTagImpl)docTag);
+                                case "@resp"://返回参数
+                                    showdocModel.getRespParam().add((RespTagImpl)docTag);
                                     break;
-                                case "@date":
-                                    showdocModel.setDate(String.valueOf(docTag.getValues()));
+                                case "@see"://实体参数
+                                    SeeTagImpl seeTag = (SeeTagImpl)docTag;
+                                    showdocModel.getFieldInfos().addAll(seeTag.getValues().getFieldInfos());
+                                    break;
                             }
                         }
                         SpringApiAction springApiAction = (SpringApiAction)apiAction;
@@ -120,9 +115,11 @@ public class XDocService {
                             showdocModel.setRespData(springApiAction.getReturnDesc());
                         }
                         List<String> urls = new ArrayList<String>();
-                        for(String parentUrl:springApiModule.getUris()){
-                            for(String url:springApiAction.getUris()){
-                                urls.add((String.valueOf(parentUrl.charAt(0)).equals("/") ?"":"/" )+parentUrl + (String.valueOf(url.charAt(0)).equals("/") ?"":"/" ) + url);
+                        if(springApiModule.getUris()!=null){
+                            for(String parentUrl:springApiModule.getUris()){
+                                for(String url:springApiAction.getUris()){
+                                    urls.add((String.valueOf(parentUrl.charAt(0)).equals("/") ?"":"/" )+parentUrl + (String.valueOf(url.charAt(0)).equals("/") ?"":"/" ) + url);
+                                }
                             }
                         }
                         showdocModel.setUrl(urls);

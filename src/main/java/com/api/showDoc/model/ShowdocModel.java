@@ -55,17 +55,17 @@ public class ShowdocModel {
     /**
      * 请求参数
      */
-    private List<ParamTagImpl> paramTag;
+    private List<ParamTagImpl> paramTag = new ArrayList<>();
 
     /**
      * 请求参数说明
      */
-    private List<FieldInfo> paramFieldInfos;
+    private List<FieldInfo> paramFieldInfos = new ArrayList<>();
 
     /**
      * 返回参数说明
      */
-    private List<FieldInfo> fieldInfos;
+    private List<FieldInfo> fieldInfos = new ArrayList<>();
 
 
     /**
@@ -86,7 +86,7 @@ public class ShowdocModel {
     /**
      * 返回参数说明
      */
-    private List<RespTagImpl> respParam;
+    private List<RespTagImpl> respParam = new ArrayList<>();
 
     private Model model;
 

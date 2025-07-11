@@ -1,6 +1,5 @@
 package com.api.showDoc.model;
 
-import lombok.Data;
 
 import java.util.List;
 
@@ -10,7 +9,6 @@ import java.util.List;
  * @author huangyuyi
  * @date 2019-03-21 10:13
  */
-@Data
 public class ResultModel {
 
     /**
@@ -22,6 +20,27 @@ public class ResultModel {
 
     private List<ShowdocModel> list;
 
+    public String getComment() {
+        return comment;
+    }
 
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
+    public String getControName() {
+        return controName;
+    }
+
+    public void setControName(String controName) {
+        this.controName = controName;
+    }
+
+    public List<ShowdocModel> getList() {
+        return list;
+    }
+
+    public void setList(List<ShowdocModel> list) {
+        this.list = list;
+    }
 }

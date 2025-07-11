@@ -1,7 +1,6 @@
 package com.api.javaParser.xdoc.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import com.api.javaParser.xdoc.tag.DocTag;
 
 import java.lang.reflect.Method;
@@ -13,7 +12,6 @@ import java.util.List;
  * @author huangyuyi
  * @date 2017-03-03 11:09
  */
-@Data
 public class ApiAction {
 
     /**
@@ -42,10 +40,6 @@ public class ApiAction {
      */
     private List<DocTag> docTags;
 
-    /**
-     * 方法参数的解析
-     */
-    private List<DocTag> paramTags;
 
     public String getTitle() {
         return title;
@@ -87,11 +81,4 @@ public class ApiAction {
         this.docTags = docTags;
     }
 
-    public List<DocTag> getParamTags() {
-        return paramTags;
-    }
-
-    public void setParamTags(List<DocTag> paramTags) {
-        this.paramTags = paramTags;
-    }
 }

@@ -3,6 +3,7 @@ package com.api.javaParser.xdoc.resolver.javaparser.converter;
 
 import com.api.javaParser.xdoc.tag.DocTag;
 import com.api.javaParser.xdoc.tag.ParamTagImpl;
+import com.api.javaParser.xdoc.tag.SeeTagImpl;
 import com.api.javaParser.xdoc.utils.Constant;
 
 /**
@@ -21,6 +22,16 @@ public class ParamTagConverter extends DefaultJavaParserTagConverterImpl {
             docTag = paramsTagConverter.converter(comment);
             docTag.setTagName("@params");
             return docTag;
+        }
+        if("@resp".equals(docTag.getTagName())&&val.matches("[A-Z][a-zA-Z]*")){
+            //如果不是基本数据类型，则是对象  使用@see解析
+            if(!Constant.DATA_TYPE.contains(val)){
+                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
+                SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+val);
+                if(tag!=null){
+                    return tag;
+                }
+            }
         }
         String[] array = val.split("[ \t]+");
         String paramName = null;

@@ -1,6 +1,5 @@
 package com.api.javaParser.xdoc.tag;
 
-import lombok.Getter;
 
 /**
  * 针对注释标签
@@ -12,7 +11,6 @@ public abstract class DocTag<T> {
     /**
      * 标签名称
      */
-    @Getter
     private String tagName;
 
     public DocTag(String tagName) {

@@ -3,7 +3,6 @@ package com.api.javaParser.xdoc;
 import com.api.javaParser.xdoc.model.ApiDoc;
 import com.api.javaParser.xdoc.resolver.DocTagResolver;
 import com.api.javaParser.xdoc.utils.FileUtils;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.api.javaParser.xdoc.framework.Framework;
@@ -35,7 +34,6 @@ public class XDoc {
     /**
      * api框架类型
      */
-    @Setter
     private Framework framework;
 
     /**
@@ -45,7 +43,6 @@ public class XDoc {
      *
      * @see JavaParserDocTagResolver
      */
-    @Setter
     private DocTagResolver docTagResolver = new JavaParserDocTagResolver();
 
     /**
@@ -87,5 +84,41 @@ public class XDoc {
             apiModules = framework.extend(apiModules);
         }
         return new ApiDoc(apiModules);
+    }
+
+    public static String getCHARSET() {
+        return CHARSET;
+    }
+
+    public Logger getLog() {
+        return log;
+    }
+
+    public void setLog(Logger log) {
+        this.log = log;
+    }
+
+    public List<String> getSrcPaths() {
+        return srcPaths;
+    }
+
+    public void setSrcPaths(List<String> srcPaths) {
+        this.srcPaths = srcPaths;
+    }
+
+    public Framework getFramework() {
+        return framework;
+    }
+
+    public void setFramework(Framework framework) {
+        this.framework = framework;
+    }
+
+    public DocTagResolver getDocTagResolver() {
+        return docTagResolver;
+    }
+
+    public void setDocTagResolver(DocTagResolver docTagResolver) {
+        this.docTagResolver = docTagResolver;
     }
 }

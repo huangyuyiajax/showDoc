@@ -1,6 +1,5 @@
 package com.api.javaParser.xdoc.model;
 
-import lombok.Data;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
  * @author huangyuyi
  * @date 2017-03-03 12:14
  */
-@Data
 public class ObjectInfo {
 
     /**
