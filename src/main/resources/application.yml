@@ -1,5 +1,5 @@
 xDoc: true  # 是否启用
-xDocPath: src\main\java\com\api\showDoc\controller\
+xDocPath: #src\main\java\com\api\showDoc\controller\
 # Tomcat
 server:
     tomcat:
