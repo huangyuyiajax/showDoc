@@ -1,5 +1,6 @@
 package com.api.javaParser.xdoc.resolver.javaparser;
 
+import com.api.javaParser.spring.framework.SpringApiAction;
 import com.api.javaParser.xdoc.model.ApiAction;
 import com.api.javaParser.xdoc.model.FieldInfo;
 import com.api.javaParser.xdoc.resolver.DocTagResolver;
@@ -25,6 +26,7 @@ import com.api.javaParser.xdoc.framework.Framework;
 import com.api.javaParser.xdoc.model.ApiModule;
 import com.api.javaParser.xdoc.resolver.IgnoreApi;
 import com.api.javaParser.xdoc.resolver.javaparser.converter.JavaParserTagConverterRegistrar;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.FileInputStream;
 import java.lang.annotation.Annotation;
@@ -89,7 +91,9 @@ public class JavaParserDocTagResolver implements DocTagResolver {
                 TypeDeclaration typeDeclaration = cu.getTypes().get(0);
                 final Class<?> moduleType = Class.forName(cu.getPackageDeclaration().get().getNameAsString() + "." + typeDeclaration.getNameAsString());
                 //控制层类
-
+                if(moduleType.isInterface()){
+                    continue;
+                }
                 if (!framework.support(moduleType)) {
                     continue;
                 }
@@ -118,6 +122,11 @@ public class JavaParserDocTagResolver implements DocTagResolver {
 
                         IgnoreApi ignoreApi = method.getAnnotation(IgnoreApi.class);
                         if (ignoreApi != null) {
+                            return;
+                        }
+
+                        boolean ifurl = getUrisAndMethods(method);
+                        if (!ifurl) {
                             return;
                         }
                         List<DocTag> docTagList = new ArrayList<DocTag>();
@@ -203,62 +212,62 @@ public class JavaParserDocTagResolver implements DocTagResolver {
                         }
 
                         Class<?> returnType = method.getReturnType();
-
-                        String returnTypeSimpleNameType = returnType.getSimpleName();
-                        //如果不是基本数据类型，则是对象  使用@see解析
-                        if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)){
-                            JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                            SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+returnTypeSimpleNameType);
-                            if(tag!=null){
-                                tag.setTagName("@see");
-                                docTagList.add(tag);
-                            }
-                        } else if(Constant.LIST_TYPE.contains(returnTypeSimpleNameType)){
-                            // 获取泛型参数类型
-
-                            java.lang.reflect.Type genericType = method.getGenericReturnType();
-                            if (genericType instanceof ParameterizedType) {
-                                ParameterizedType pType = (ParameterizedType) genericType;
-                                java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
-                                String entyType = actualTypeArgs[0].getTypeName();
-                                if(!Constant.DATA_TYPE.contains(entyType)){
-                                    JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                                    SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+entyType);
-                                    if(tag!=null){
-                                        tag.setTagName("@see");
-                                        docTagList.add(tag);
-                                    }
+                        if(!returnType.isInterface()) {
+                            String returnTypeSimpleNameType = returnType.getSimpleName();
+                            //如果不是基本数据类型，则是对象  使用@see解析
+                            if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
+                                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
+                                SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + returnTypeSimpleNameType);
+                                if (tag != null) {
+                                    tag.setTagName("@see");
+                                    docTagList.add(tag);
                                 }
-                            }
-                        }else  {
-                            JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@resp");
-                            RespTagImpl docTag = (RespTagImpl)converter.converter("@resp "+returnTypeSimpleNameType);
-                            docTag.setParamType(returnTypeSimpleNameType);
-                            docTag.setParamDesc(returnParamDesc);
-                            docTagList.add(docTag);
-                        }
-
-                        if(respbodyFlag){
-                            if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)){
-                                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
-                                DocTag docTag = converter.converter("@respbody |"+returnTypeSimpleNameType+"|");
-                                docTagList.add(docTag);
-                            }else if(Constant.LIST_TYPE.contains(returnTypeSimpleNameType)){
+                            } else if (Constant.LIST_TYPE.contains(returnTypeSimpleNameType)) {
                                 // 获取泛型参数类型
+
                                 java.lang.reflect.Type genericType = method.getGenericReturnType();
                                 if (genericType instanceof ParameterizedType) {
                                     ParameterizedType pType = (ParameterizedType) genericType;
                                     java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
                                     String entyType = actualTypeArgs[0].getTypeName();
-                                    if(!Constant.DATA_TYPE.contains(entyType)){
-                                        JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
-                                        DocTag docTag = converter.converter("@respbody [|"+entyType.substring(entyType.lastIndexOf(".")+1)+"|]");
-                                        docTagList.add(docTag);
+                                    if (!Constant.DATA_TYPE.contains(entyType)) {
+                                        JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
+                                        SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + entyType);
+                                        if (tag != null) {
+                                            tag.setTagName("@see");
+                                            docTagList.add(tag);
+                                        }
+                                    }
+                                }
+                            } else {
+                                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@resp");
+                                RespTagImpl docTag = (RespTagImpl) converter.converter("@resp " + returnTypeSimpleNameType);
+                                docTag.setParamType(returnTypeSimpleNameType);
+                                docTag.setParamDesc(returnParamDesc);
+                                docTagList.add(docTag);
+                            }
+
+                            if (respbodyFlag) {
+                                if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
+                                    JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
+                                    DocTag docTag = converter.converter("@respbody |" + returnTypeSimpleNameType + "|");
+                                    docTagList.add(docTag);
+                                } else if (Constant.LIST_TYPE.contains(returnTypeSimpleNameType)) {
+                                    // 获取泛型参数类型
+                                    java.lang.reflect.Type genericType = method.getGenericReturnType();
+                                    if (genericType instanceof ParameterizedType) {
+                                        ParameterizedType pType = (ParameterizedType) genericType;
+                                        java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
+                                        String entyType = actualTypeArgs[0].getTypeName();
+                                        if (!Constant.DATA_TYPE.contains(entyType)) {
+                                            JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
+                                            DocTag docTag = converter.converter("@respbody [|" + entyType.substring(entyType.lastIndexOf(".") + 1) + "|]");
+                                            docTagList.add(docTag);
+                                        }
                                     }
                                 }
                             }
                         }
-
                         ApiAction apiAction = new ApiAction();
                         if (m.getComment().isPresent()) {
                             apiAction.setComment(CommentUtils.parseCommentText(m.getComment().get().getContent()));
@@ -330,4 +339,37 @@ public class JavaParserDocTagResolver implements DocTagResolver {
         }
         return null;
     }
+
+
+    /**
+     * 是否有请求地址
+     */
+    private boolean getUrisAndMethods(Method method) {
+        RequestMapping methodRequestMappingAnno = method.getAnnotation(RequestMapping.class);
+        if (methodRequestMappingAnno != null) {
+            return true;
+        }
+        PostMapping postMapping = method.getAnnotation(PostMapping.class);
+        if (postMapping != null) {
+            return true;
+        }
+        GetMapping getMapping = method.getAnnotation(GetMapping.class);
+        if (getMapping != null) {
+            return true;
+        }
+        PutMapping putMapping = method.getAnnotation(PutMapping.class);
+        if (putMapping != null) {
+            return true;
+        }
+        DeleteMapping deleteMapping = method.getAnnotation(DeleteMapping.class);
+        if (deleteMapping != null) {
+            return true;
+        }
+        PatchMapping patchMapping = method.getAnnotation(PatchMapping.class);
+        if (patchMapping != null) {
+            return true;
+        }
+        return false;
+    }
+
 }

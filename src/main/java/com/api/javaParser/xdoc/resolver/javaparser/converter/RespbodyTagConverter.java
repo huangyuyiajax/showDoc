@@ -93,6 +93,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
                 return null;
             }
             returnClassz = Class.forName(cu.getPackageDeclaration().get().getNameAsString() + "." + cu.getTypes().get(0).getNameAsString());
+
             List<String> commentMap = this.analysisFieldComments(returnClassz,flag, paramValue);
             obj1.append("{");
             for(int i=0 ;i<commentMap.size();i++){
@@ -110,7 +111,9 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
     }
 
     private List<String> analysisFieldComments(Class<?> classz,Integer flag,Map<String,String> paramValue) {
-
+        if(classz.isInterface()){
+            return new ArrayList<>();
+        }
         final Map<String, String> commentMap = new HashMap(10);
 
         List<Class> classes = new LinkedList<Class>();

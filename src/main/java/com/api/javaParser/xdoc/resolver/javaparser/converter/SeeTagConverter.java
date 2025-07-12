@@ -68,7 +68,9 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
                 log.warn("读取java原文件失败:{}", path, e.getMessage());
                 continue;
             }
-
+            if(returnClassz.isInterface()){
+                continue;
+            }
             String text = cu.getComment().isPresent() ? CommentUtils.parseCommentText(cu.getComment().get().getContent()) : "";
 
             Map<String, String> commentMap = this.analysisFieldComments(returnClassz);
