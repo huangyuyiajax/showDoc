@@ -30,7 +30,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
     private Logger log = LoggerFactory.getLogger(RespbodyTagConverter.class);
 
     //递归解析多少层
-    private int level = 1;
+    private int respbodyLevel = 2;
 
     @Override
     public DocTagImpl converter(String comment) {
@@ -60,7 +60,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
                 for(String v:strings1){
                     paramValue.put(v.split(":")[0],v.split(":").length>1?v.split(":")[1]:null);
                 }
-                String parser =  parser(path,0, paramValue);
+                String parser =  parser(path,1, paramValue);
                 if(parser!= null&& parser.contains("{")){
                     parser = parser.substring(parser.indexOf("{"));
                     int index = values.indexOf("|"+val.trim()+"|");
@@ -172,6 +172,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
 
         return new ArrayList<>();
     }
+
     private List<String> analysisFields(Class classz, Map<String, String> commentMap,Integer flag,Map<String,String> paramValue) {
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(classz);
         List<String> fields = new ArrayList<>();
@@ -182,10 +183,10 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
             }
             String type = propertyDescriptor.getPropertyType().getSimpleName();
             String comment = commentMap.get(propertyDescriptor.getName());
-            if(!Constant.DATA_TYPE.contains(type)&&flag<level){
+            if(!Constant.DATA_TYPE.contains(type)&&flag<respbodyLevel){
                 comment = parser(type,flag+1,paramValue);
             }
-            if("List".equals(type)&&flag<level){
+            if("List".equals(type)&&flag<respbodyLevel){
                 String method= propertyDescriptor.getReadMethod().toGenericString();
                 int star = method.indexOf("<");
                 int end = method.indexOf(">",star);

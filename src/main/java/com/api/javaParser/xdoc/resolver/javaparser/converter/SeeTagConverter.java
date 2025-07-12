@@ -33,11 +33,11 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
     private Logger log = LoggerFactory.getLogger(SeeTagConverter.class);
 
     //递归解析多少层
-    private int level = 3;
+    private int paramLevel = 4;
 
     @Override
     public DocTag converter(String comment) {
-        return  converter(comment,0);
+        return  converter(comment,1);
     }
     @Override
     public DocTag converter(String comment,Integer i) {
@@ -190,14 +190,14 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
             field.setRequire(require);
             String returnTypeSimpleNameType = propertyDescriptor.getType().getSimpleName();
 
-            if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)&&i<level){
+            if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)&&i<paramLevel){
                 JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
                 SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+returnTypeSimpleNameType,i+1);
                 if(tag!=null){
                     field.setFieldInfos(tag.getValues().getFieldInfos());
                 }
             }
-            if(Constant.LIST_TYPE.contains(returnTypeSimpleNameType)&&i<level){
+            if(Constant.LIST_TYPE.contains(returnTypeSimpleNameType)&&i<paramLevel){
                 // 获取泛型参数类型
                 Type genericType = propertyDescriptor.getGenericType();
                 if (genericType instanceof ParameterizedType) {
