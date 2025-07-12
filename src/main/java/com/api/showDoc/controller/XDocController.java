@@ -1,6 +1,6 @@
 package com.api.showDoc.controller;
 
-import com.api.javaParser.xdoc.resolver.IgnoreApi;
+import com.api.showDoc.javaParser.xdoc.resolver.IgnoreApi;
 import com.api.showDoc.service.XDocService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

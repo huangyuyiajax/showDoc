@@ -18,7 +18,7 @@ import java.util.HashMap;
  * @description TODO
  * @version 1.0
  */
-@Controller
+@Controller("showDocTestController")
 @RequestMapping("/test")
 public class TestController {
 

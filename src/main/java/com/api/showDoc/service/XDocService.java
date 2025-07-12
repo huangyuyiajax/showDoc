@@ -1,14 +1,14 @@
 package com.api.showDoc.service;
 
-import com.api.javaParser.spring.framework.SpringApiAction;
-import com.api.javaParser.spring.framework.SpringApiModule;
-import com.api.javaParser.spring.framework.SpringWebFramework;
-import com.api.javaParser.xdoc.XDoc;
-import com.api.javaParser.xdoc.model.ApiAction;
-import com.api.javaParser.xdoc.model.ApiDoc;
-import com.api.javaParser.xdoc.model.ApiModule;
-import com.api.javaParser.xdoc.tag.*;
-import com.api.javaParser.xdoc.utils.JsonFormatUtils;
+import com.api.showDoc.javaParser.spring.framework.SpringApiAction;
+import com.api.showDoc.javaParser.spring.framework.SpringApiModule;
+import com.api.showDoc.javaParser.spring.framework.SpringWebFramework;
+import com.api.showDoc.javaParser.xdoc.XDoc;
+import com.api.showDoc.javaParser.xdoc.model.ApiAction;
+import com.api.showDoc.javaParser.xdoc.model.ApiDoc;
+import com.api.showDoc.javaParser.xdoc.model.ApiModule;
+import com.api.showDoc.javaParser.xdoc.tag.*;
+import com.api.showDoc.javaParser.xdoc.utils.JsonFormatUtils;
 import com.api.showDoc.model.ResultModel;
 import com.api.showDoc.model.ShowdocModel;
 import org.apache.commons.lang3.StringUtils;

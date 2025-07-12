@@ -1,8 +1,8 @@
 package com.api.showDoc.model;
 
-import com.api.javaParser.xdoc.model.FieldInfo;
-import com.api.javaParser.xdoc.tag.ParamTagImpl;
-import com.api.javaParser.xdoc.tag.RespTagImpl;
+import com.api.showDoc.javaParser.xdoc.model.FieldInfo;
+import com.api.showDoc.javaParser.xdoc.tag.ParamTagImpl;
+import com.api.showDoc.javaParser.xdoc.tag.RespTagImpl;
 
 import java.util.ArrayList;
 import java.util.List;
