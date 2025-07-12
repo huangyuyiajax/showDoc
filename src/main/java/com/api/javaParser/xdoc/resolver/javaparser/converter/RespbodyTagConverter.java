@@ -37,6 +37,9 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         DocTag docTag = super.converter(comment);
 
         String values = (String) docTag.getValues();;//  {code:0,list:[ShowdocModel],msg:sad}
+        if("|void|".equals(values)){
+            return new DocTagImpl(docTag.getTagName(),"");
+        }
         if(values.matches("[A-Z][a-zA-Z]*")){
             values = "|"+values+"|";
         }
