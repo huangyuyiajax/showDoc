@@ -24,7 +24,7 @@ public class XDocController {
 
     /**
      * 生成文档
-     * @author 黄育益
+     * @author huangyuyi
      * @description  获取所有文档a
      * @date 2019/3/26
     */

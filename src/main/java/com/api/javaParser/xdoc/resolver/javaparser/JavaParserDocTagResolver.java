@@ -63,6 +63,9 @@ public class JavaParserDocTagResolver implements DocTagResolver {
                 final Class<?> moduleType = Class.forName(cu.getPackageDeclaration().get().getNameAsString() + "." + typeDeclaration.getNameAsString());
                 IgnoreApi ignoreApi = moduleType.getAnnotation(IgnoreApi.class);
                 if (ignoreApi == null) {
+                    if(ClassMapperUtils.getPath(moduleType.getSimpleName())!=null){
+                        log.warn("注意存在多个相同名称的文件:{}，{}",ClassMapperUtils.getPath(moduleType.getSimpleName()), file);
+                    }
                     //缓存"包名+类名"跟对应的.java文件的位置映射关系
                     ClassMapperUtils.put(moduleType.getName(), file);
                     //缓存"类名"跟对应的.java文件的位置映射关系

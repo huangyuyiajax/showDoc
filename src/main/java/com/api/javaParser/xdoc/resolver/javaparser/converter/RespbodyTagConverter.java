@@ -2,6 +2,7 @@ package com.api.javaParser.xdoc.resolver.javaparser.converter;
 
 import com.api.javaParser.xdoc.tag.DocTag;
 import com.api.javaParser.xdoc.tag.DocTagImpl;
+import com.api.javaParser.xdoc.tag.SeeTagImpl;
 import com.api.javaParser.xdoc.utils.ClassMapperUtils;
 import com.api.javaParser.xdoc.utils.CommentUtils;
 import com.api.javaParser.xdoc.utils.Constant;
@@ -33,6 +34,9 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         DocTag docTag = super.converter(comment);
 
         String values = (String) docTag.getValues();;//  {code:0,list:[ShowdocModel],msg:sad}
+        if(values.matches("[A-Z][a-zA-Z]*")){
+            values = "|"+values+"|";
+        }
         String[] strings = values.split("\\|");
         String replace = values;
         for(String val:strings){

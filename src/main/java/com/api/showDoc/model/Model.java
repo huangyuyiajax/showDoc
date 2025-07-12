@@ -17,7 +17,6 @@ public class Model {
 
     /**
      * 简要描述|Y:22
-     * 黄玉一
      */
     private String description = "";
 

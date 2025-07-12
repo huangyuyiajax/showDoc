@@ -66,9 +66,9 @@ public class XDocService {
                 List<ApiAction> apiActions = apiModule.getApiActions();//此业务模块下有哪些接口  相当一个controller类 下一个方法
                 SpringApiModule springApiModule = (SpringApiModule)apiModule;
                 List<ShowdocModel> showdocModels = new ArrayList();
-                String canonicalName = apiModule.getType().getCanonicalName();
+//                String canonicalName = apiModule.getType().getCanonicalName();
                 for(ApiAction apiAction:apiActions){
-                    String page_title = StringUtils.isNotBlank(apiAction.getComment())?apiAction.getComment():(canonicalName+"."+apiAction.getName());
+                    String page_title = StringUtils.isNotBlank(apiAction.getComment())?apiAction.getComment():apiAction.getName();
                     try{
                         ShowdocModel showdocModel = new ShowdocModel();
                         showdocModel.setPageTitle(page_title);
