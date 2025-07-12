@@ -29,6 +29,9 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
 
     private Logger log = LoggerFactory.getLogger(RespbodyTagConverter.class);
 
+    //递归解析多少层
+    private int level = 1;
+
     @Override
     public DocTagImpl converter(String comment) {
         DocTag docTag = super.converter(comment);
@@ -57,7 +60,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
                 for(String v:strings1){
                     paramValue.put(v.split(":")[0],v.split(":").length>1?v.split(":")[1]:null);
                 }
-                String parser =  parser(path,true, paramValue);
+                String parser =  parser(path,0, paramValue);
                 if(parser!= null&& parser.contains("{")){
                     parser = parser.substring(parser.indexOf("{"));
                     int index = values.indexOf("|"+val.trim()+"|");
@@ -72,7 +75,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         return new DocTagImpl(docTag.getTagName(),replace);
     }
 
-    private String parser(String values,boolean flag, Map<String,String> paramValue){
+    private String parser(String values,Integer flag, Map<String,String> paramValue){
         String path = ClassMapperUtils.getPath(values);
         if (StringUtils.isBlank(path)) {
             return values;
@@ -103,7 +106,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         return obj1.toString();
     }
 
-    private List<String> analysisFieldComments(Class<?> classz,boolean flag,Map<String,String> paramValue) {
+    private List<String> analysisFieldComments(Class<?> classz,Integer flag,Map<String,String> paramValue) {
 
         final Map<String, String> commentMap = new HashMap(10);
 
@@ -169,7 +172,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
 
         return new ArrayList<>();
     }
-    private List<String> analysisFields(Class classz, Map<String, String> commentMap,boolean flag,Map<String,String> paramValue) {
+    private List<String> analysisFields(Class classz, Map<String, String> commentMap,Integer flag,Map<String,String> paramValue) {
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(classz);
         List<String> fields = new ArrayList<>();
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -179,19 +182,19 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
             }
             String type = propertyDescriptor.getPropertyType().getSimpleName();
             String comment = commentMap.get(propertyDescriptor.getName());
-            if(!Constant.DATA_TYPE.contains(type)&&flag){
-                comment = parser(type,false,null);
+            if(!Constant.DATA_TYPE.contains(type)&&flag<level){
+                comment = parser(type,flag+1,paramValue);
             }
-            if("List".equals(type)&&flag){
+            if("List".equals(type)&&flag<level){
                 String method= propertyDescriptor.getReadMethod().toGenericString();
                 int star = method.indexOf("<");
                 int end = method.indexOf(">",star);
                 if(paramValue.get(propertyDescriptor.getName())!=null){
-                    String  value = parser(paramValue.get(propertyDescriptor.getName()),false,null);
+                    String  value = parser(paramValue.get(propertyDescriptor.getName()),flag+1,paramValue);
                     comment = "["+value+","+value+",...]";
                 }else if(star>0&&end>0){
                     String path = method.substring(star+1,end);
-                    String  value = parser(path,false,null);
+                    String  value = parser(path,flag+1,paramValue);
                     comment = "["+value+value+",...]";
                 }
             }
