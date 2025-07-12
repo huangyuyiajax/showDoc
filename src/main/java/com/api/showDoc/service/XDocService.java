@@ -121,6 +121,10 @@ public class XDocService {
                                     urls.add((String.valueOf(parentUrl.charAt(0)).equals("/") ?"":"/" )+parentUrl + (String.valueOf(url.charAt(0)).equals("/") ?"":"/" ) + url);
                                 }
                             }
+                        }else if(springApiAction.getUris()!=null){
+                            for(String url:springApiAction.getUris()){
+                                urls.add((String.valueOf(url.charAt(0)).equals("/") ?"":"/" ) + url);
+                            }
                         }
                         showdocModel.setUrl(urls);
                         showdocModels.add(showdocModel);

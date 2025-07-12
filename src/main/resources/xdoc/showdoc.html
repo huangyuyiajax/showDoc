@@ -118,10 +118,10 @@
             <h2 class="section-title">请求参数</h2>
             <table>
                 <tr>
-                    <th>参数名</th>
-                    <th>必选</th>
-                    <th>类型</th>
-                    <th>说明</th>
+                    <th style="width: 25%">参数名</th>
+                    <th style="width: 5%">必选</th>
+                    <th style="width: 10%">类型</th>
+                    <th style="width: 60%">说明</th>
                 </tr>
                 {{if v.paramTag.length>0}}
                 {{each v.paramTag column j}}
@@ -221,9 +221,9 @@
             <h2 class="section-title">返回参数说明</h2>
             <table>
                 <tr>
-                    <th>参数名</th>
-                    <th>类型</th>
-                    <th>说明</th>
+                    <th style="width: 25%">参数名</th>
+                    <th style="width: 10%">类型</th>
+                    <th style="width: 65%">说明</th>
                 </tr>
                 {{if v.respParam.length>0}}
                 {{each v.respParam column j}}
