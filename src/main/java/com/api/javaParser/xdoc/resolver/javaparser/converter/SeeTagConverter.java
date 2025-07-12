@@ -33,7 +33,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
     private Logger log = LoggerFactory.getLogger(SeeTagConverter.class);
 
     //递归解析多少层
-    private int level = 2;
+    private int level = 3;
 
     @Override
     public DocTag converter(String comment) {
