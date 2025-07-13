@@ -212,58 +212,56 @@ public class JavaParserDocTagResolver implements DocTagResolver {
                         }
 
                         Class<?> returnType = method.getReturnType();
-                        if(!returnType.isInterface()) {
-                            String returnTypeSimpleNameType = returnType.getSimpleName();
-                            //如果不是基本数据类型，则是对象  使用@see解析
-                            if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
-                                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                                SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + returnTypeSimpleNameType);
-                                if (tag != null) {
-                                    tag.setTagName("@see");
-                                    docTagList.add(tag);
+                        String returnTypeSimpleNameType = returnType.getSimpleName();
+                        //如果不是基本数据类型，则是对象  使用@see解析
+                        if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
+                            JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
+                            SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + returnTypeSimpleNameType);
+                            if (tag != null) {
+                                tag.setTagName("@see");
+                                docTagList.add(tag);
+                            }
+                        } else if (Constant.LIST_TYPE.contains(returnTypeSimpleNameType)) {
+                            // 获取泛型参数类型
+
+                            java.lang.reflect.Type genericType = method.getGenericReturnType();
+                            if (genericType instanceof ParameterizedType) {
+                                ParameterizedType pType = (ParameterizedType) genericType;
+                                java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
+                                String entyType = actualTypeArgs[0].getTypeName();
+                                if (!Constant.DATA_TYPE.contains(entyType)) {
+                                    JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
+                                    SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + entyType);
+                                    if (tag != null) {
+                                        tag.setTagName("@see");
+                                        docTagList.add(tag);
+                                    }
                                 }
+                            }
+                        } else {
+                            JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@resp");
+                            RespTagImpl docTag = (RespTagImpl) converter.converter("@resp " + returnTypeSimpleNameType);
+                            docTag.setParamType(returnTypeSimpleNameType);
+                            docTag.setParamDesc(returnParamDesc);
+                            docTagList.add(docTag);
+                        }
+
+                        if (respbodyFlag) {
+                            if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
+                                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
+                                DocTag docTag = converter.converter("@respbody |" + returnTypeSimpleNameType + "|");
+                                docTagList.add(docTag);
                             } else if (Constant.LIST_TYPE.contains(returnTypeSimpleNameType)) {
                                 // 获取泛型参数类型
-
                                 java.lang.reflect.Type genericType = method.getGenericReturnType();
                                 if (genericType instanceof ParameterizedType) {
                                     ParameterizedType pType = (ParameterizedType) genericType;
                                     java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
                                     String entyType = actualTypeArgs[0].getTypeName();
                                     if (!Constant.DATA_TYPE.contains(entyType)) {
-                                        JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                                        SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + entyType);
-                                        if (tag != null) {
-                                            tag.setTagName("@see");
-                                            docTagList.add(tag);
-                                        }
-                                    }
-                                }
-                            } else {
-                                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@resp");
-                                RespTagImpl docTag = (RespTagImpl) converter.converter("@resp " + returnTypeSimpleNameType);
-                                docTag.setParamType(returnTypeSimpleNameType);
-                                docTag.setParamDesc(returnParamDesc);
-                                docTagList.add(docTag);
-                            }
-
-                            if (respbodyFlag) {
-                                if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
-                                    JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
-                                    DocTag docTag = converter.converter("@respbody |" + returnTypeSimpleNameType + "|");
-                                    docTagList.add(docTag);
-                                } else if (Constant.LIST_TYPE.contains(returnTypeSimpleNameType)) {
-                                    // 获取泛型参数类型
-                                    java.lang.reflect.Type genericType = method.getGenericReturnType();
-                                    if (genericType instanceof ParameterizedType) {
-                                        ParameterizedType pType = (ParameterizedType) genericType;
-                                        java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
-                                        String entyType = actualTypeArgs[0].getTypeName();
-                                        if (!Constant.DATA_TYPE.contains(entyType)) {
-                                            JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
-                                            DocTag docTag = converter.converter("@respbody [|" + entyType.substring(entyType.lastIndexOf(".") + 1) + "|]");
-                                            docTagList.add(docTag);
-                                        }
+                                        JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
+                                        DocTag docTag = converter.converter("@respbody [|" + entyType.substring(entyType.lastIndexOf(".") + 1) + "|]");
+                                        docTagList.add(docTag);
                                     }
                                 }
                             }
