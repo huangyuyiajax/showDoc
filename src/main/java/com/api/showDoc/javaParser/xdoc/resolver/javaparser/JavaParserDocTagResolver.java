@@ -109,37 +109,37 @@ public class JavaParserDocTagResolver implements DocTagResolver {
                     String commentText = CommentUtils.parseCommentText(typeDeclaration.getComment().get().getContent());
                     commentText = commentText.split("\n")[0].split("\r")[0];
                     apiModule.setComment(commentText);
-                }
 
-                List<String> classcomments = CommentUtils.asCommentList(StringUtils.defaultIfBlank(typeDeclaration.getComment().get().getContent(), ""));
-                //类上面@注释
-                for (int i = 0; i < classcomments.size(); i++) {
-                    String c = classcomments.get(i);
-                    //把第一个字母转为小写
-                    if(c.length()>1){
-                        String first = String.valueOf(c.charAt(1));
-                        c = c.replaceFirst(first,first.toLowerCase());
-                    }
-                    String tagType = CommentUtils.getTagType(c);
-                    if (StringUtils.isBlank(tagType)) {
-                        continue;
-                    }
-                    JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter(tagType);
-                    DocTag docTag = converter.converter(c);
-                    if (docTag != null) {
-                        switch(docTag.getTagName()){
-                            case "@author":
-                                apiModule.setAuthor(String.valueOf(docTag.getValues()));
-                                break;
-                            case "@date":
-                                apiModule.setDate(String.valueOf(docTag.getValues()));
-                                break;
-                            case "@description":
-                                apiModule.setDescription(String.valueOf(docTag.getValues()));
-                                break;
+                    List<String> classcomments = CommentUtils.asCommentList(StringUtils.defaultIfBlank(typeDeclaration.getComment().get().getContent(), ""));
+                    //类上面@注释
+                    for (int i = 0; i < classcomments.size(); i++) {
+                        String c = classcomments.get(i);
+                        //把第一个字母转为小写
+                        if(c.length()>1){
+                            String first = String.valueOf(c.charAt(1));
+                            c = c.replaceFirst(first,first.toLowerCase());
                         }
-                    } else {
-                        log.warn("识别不了:{}", c);
+                        String tagType = CommentUtils.getTagType(c);
+                        if (StringUtils.isBlank(tagType)) {
+                            continue;
+                        }
+                        JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter(tagType);
+                        DocTag docTag = converter.converter(c);
+                        if (docTag != null) {
+                            switch(docTag.getTagName()){
+                                case "@author":
+                                    apiModule.setAuthor(String.valueOf(docTag.getValues()));
+                                    break;
+                                case "@date":
+                                    apiModule.setDate(String.valueOf(docTag.getValues()));
+                                    break;
+                                case "@description":
+                                    apiModule.setDescription(String.valueOf(docTag.getValues()));
+                                    break;
+                            }
+                        } else {
+                            log.warn("识别不了:{}", c);
+                        }
                     }
                 }
 
