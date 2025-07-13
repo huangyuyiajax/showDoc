@@ -148,7 +148,18 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
     private List<FieldInfo> analysisFields(Class classz, Map<String, String> commentMap,Integer i,String tType) {
 
         List<FieldInfo> fields = new ArrayList<FieldInfo>();
-        Field[] fiel =  classz.getDeclaredFields();
+
+        List<Field> fiel = new ArrayList<>();
+        Class nowClass = classz;
+        //获取所有的属性注释(包括父类的)
+        while (true) {
+            fiel.addAll(Arrays.asList(nowClass.getDeclaredFields()));
+            if (Object.class.equals(nowClass) || Object.class.equals(nowClass.getSuperclass())) {
+                break;
+            }
+            nowClass = nowClass.getSuperclass();
+        }
+
         for(Field propertyDescriptor:fiel){
             //排除掉class属性
             if ("class".equals(propertyDescriptor.getName())) {
@@ -200,8 +211,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
             String returnTypeSimpleNameType = propertyDescriptor.getType().getSimpleName();
 
             if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)&&i< XDocService.paramLevel){
-                JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+returnTypeSimpleNameType,i+1,tType);
+                SeeTagImpl tag = (SeeTagImpl)this.converter("@see "+returnTypeSimpleNameType,i+1,tType);
                 if(tag!=null){
                     field.setFieldInfos(tag.getValues().getFieldInfos());
                 }
@@ -217,8 +227,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
                         entyType = tType;
                     }
                     if(!Constant.DATA_TYPE.contains(entyType)){
-                        JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                        SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+entyType,i+1,tType);
+                        SeeTagImpl tag = (SeeTagImpl)this.converter("@see "+entyType,i+1,tType);
                         if(tag!=null){
                             field.setSimpleTypeName(returnTypeSimpleNameType+"<"+entyType.substring(entyType.lastIndexOf(".")+1)+">");
                             field.setFieldInfos(tag.getValues().getFieldInfos());
