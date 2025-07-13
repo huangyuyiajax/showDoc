@@ -37,8 +37,17 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
     public DocTag converter(String comment) {
         return  converter(comment,1);
     }
+
+    public DocTag converter(String comment,String tType) {
+        return  converter(comment,1,tType);
+    }
+
     @Override
     public DocTag converter(String comment,Integer i) {
+        return  converter(comment,1,"");
+    }
+    @Override
+    public DocTag converter(String comment,Integer i,String tType) {
         DocTag docTag = super.converter(comment);
         String value = (String) docTag.getValues();
         String [] paths =new String[]{value};
@@ -72,7 +81,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
             String text = cu.getComment().isPresent() ? CommentUtils.parseCommentText(cu.getComment().get().getContent()) : "";
 
             Map<String, String> commentMap = this.analysisFieldComments(returnClassz);
-            fields.addAll(this.analysisFields(returnClassz, commentMap,i));
+            fields.addAll(this.analysisFields(returnClassz, commentMap,i,tType));
         }
 
         ObjectInfo objectInfo = new ObjectInfo();
@@ -136,7 +145,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
         return commentMap;
     }
 
-    private List<FieldInfo> analysisFields(Class classz, Map<String, String> commentMap,Integer i) {
+    private List<FieldInfo> analysisFields(Class classz, Map<String, String> commentMap,Integer i,String tType) {
 
         List<FieldInfo> fields = new ArrayList<FieldInfo>();
         Field[] fiel =  classz.getDeclaredFields();
@@ -192,7 +201,7 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
 
             if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)&&i< XDocService.paramLevel){
                 JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+returnTypeSimpleNameType,i+1);
+                SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+returnTypeSimpleNameType,i+1,tType);
                 if(tag!=null){
                     field.setFieldInfos(tag.getValues().getFieldInfos());
                 }
@@ -204,9 +213,12 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
                     ParameterizedType pType = (ParameterizedType) genericType;
                     Type[] actualTypeArgs = pType.getActualTypeArguments();
                     String entyType = actualTypeArgs[0].getTypeName();
+                    if("T".equals(entyType)){
+                        entyType = tType;
+                    }
                     if(!Constant.DATA_TYPE.contains(entyType)){
                         JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                        SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+entyType,i+1);
+                        SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+entyType,i+1,tType);
                         if(tag!=null){
                             field.setSimpleTypeName(returnTypeSimpleNameType+"<"+entyType.substring(entyType.lastIndexOf(".")+1)+">");
                             field.setFieldInfos(tag.getValues().getFieldInfos());

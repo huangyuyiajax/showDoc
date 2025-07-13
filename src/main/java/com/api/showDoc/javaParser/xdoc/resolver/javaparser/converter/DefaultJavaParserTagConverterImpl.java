@@ -19,7 +19,15 @@ public class DefaultJavaParserTagConverterImpl implements JavaParserTagConverter
         String coment = comment.substring(tagType.length()).trim();
         return new DocTagImpl(tagType, coment);
     }
+
+    public DocTag converter(String comment,String tType) {
+        return converter(comment);
+    }
     public DocTag converter(String comment,Integer i){
+        return converter(comment);
+    }
+
+    public DocTag converter(String comment,Integer i,String tType) {
         return converter(comment);
     }
 }

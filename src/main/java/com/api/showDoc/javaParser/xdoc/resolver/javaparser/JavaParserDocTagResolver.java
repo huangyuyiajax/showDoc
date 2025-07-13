@@ -215,8 +215,16 @@ public class JavaParserDocTagResolver implements DocTagResolver {
                         String returnTypeSimpleNameType = returnType.getSimpleName();
                         //如果不是基本数据类型，则是对象  使用@see解析
                         if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
+                            String entyType = "";
+                            java.lang.reflect.Type genericType = method.getGenericReturnType();
+                            if (genericType instanceof ParameterizedType) {
+                                ParameterizedType pType = (ParameterizedType) genericType;
+                                java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
+                                entyType = actualTypeArgs[0].getTypeName();
+                            }
+
                             JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
-                            SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + returnTypeSimpleNameType);
+                            SeeTagImpl tag = (SeeTagImpl) converter.converter("@see " + returnTypeSimpleNameType,entyType);
                             if (tag != null) {
                                 tag.setTagName("@see");
                                 docTagList.add(tag);
@@ -248,8 +256,15 @@ public class JavaParserDocTagResolver implements DocTagResolver {
 
                         if (respbodyFlag) {
                             if (!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)) {
+                                String entyType = "";
+                                java.lang.reflect.Type genericType = method.getGenericReturnType();
+                                if (genericType instanceof ParameterizedType) {
+                                    ParameterizedType pType = (ParameterizedType) genericType;
+                                    java.lang.reflect.Type[] actualTypeArgs = pType.getActualTypeArguments();
+                                    entyType = actualTypeArgs[0].getTypeName();
+                                }
                                 JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@respbody");
-                                DocTag docTag = converter.converter("@respbody |" + returnTypeSimpleNameType + "|");
+                                DocTag docTag = converter.converter("@respbody |" + returnTypeSimpleNameType + "|",entyType);
                                 docTagList.add(docTag);
                             } else if (Constant.LIST_TYPE.contains(returnTypeSimpleNameType)) {
                                 // 获取泛型参数类型

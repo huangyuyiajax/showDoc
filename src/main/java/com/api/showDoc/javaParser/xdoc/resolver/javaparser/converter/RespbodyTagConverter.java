@@ -31,7 +31,12 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
     private Logger log = LoggerFactory.getLogger(RespbodyTagConverter.class);
 
     @Override
-    public DocTagImpl converter(String comment) {
+    public DocTag converter(String comment) {
+        return converter(comment,"");
+    }
+
+    @Override
+    public DocTagImpl converter(String comment,String tType) {
         DocTag docTag = super.converter(comment);
 
         String values = (String) docTag.getValues();;//  {code:0,list:[ShowdocModel],msg:sad}
@@ -61,7 +66,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
                 for(String v:strings1){
                     paramValue.put(v.split(":")[0],v.split(":").length>1?v.split(":")[1]:null);
                 }
-                String parser =  parser(path,1, paramValue);
+                String parser =  parser(path,1, paramValue,tType);
                 if(parser!= null&& parser.contains("{")){
                     parser = parser.substring(parser.indexOf("{"));
                     int index = values.indexOf("|"+val.trim()+"|");
@@ -76,7 +81,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         return new DocTagImpl(docTag.getTagName(),replace);
     }
 
-    private String parser(String values,Integer flag, Map<String,String> paramValue){
+    private String parser(String values,Integer flag, Map<String,String> paramValue,String tType){
         String path = ClassMapperUtils.getPath(values);
         if (StringUtils.isBlank(path)) {
             return values;
@@ -92,7 +97,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
             }
             returnClassz = Class.forName(cu.getPackageDeclaration().get().getNameAsString() + "." + cu.getTypes().get(0).getNameAsString());
 
-            List<String> commentMap = this.analysisFieldComments(returnClassz,flag, paramValue);
+            List<String> commentMap = this.analysisFieldComments(returnClassz,flag, paramValue,tType);
             obj1.append("{");
             for(int i=0 ;i<commentMap.size();i++){
                 if(i!=0){
@@ -108,7 +113,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         return obj1.toString();
     }
 
-    private List<String> analysisFieldComments(Class<?> classz,Integer flag,Map<String,String> paramValue) {
+    private List<String> analysisFieldComments(Class<?> classz,Integer flag,Map<String,String> paramValue,String tType) {
         if(classz.isInterface()){
             return new ArrayList<>();
         }
@@ -168,7 +173,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
                         commentMap.put(name, comment);
                     }
                 }.visit(cu, null);
-                return analysisFields(classz,commentMap,flag, paramValue);
+                return analysisFields(classz,commentMap,flag, paramValue,tType);
             } catch (Exception e) {
                 log.warn("读取java原文件失败:{}", path, e.getMessage(), e);
             }
@@ -177,7 +182,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         return new ArrayList<>();
     }
 
-    private List<String> analysisFields(Class classz, Map<String, String> commentMap,Integer flag,Map<String,String> paramValue) {
+    private List<String> analysisFields(Class classz, Map<String, String> commentMap,Integer flag,Map<String,String> paramValue,String tType) {
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(classz);
         List<String> fields = new ArrayList<>();
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -188,18 +193,21 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
             String type = propertyDescriptor.getPropertyType().getSimpleName();
             String comment = commentMap.get(propertyDescriptor.getName());
             if(!Constant.DATA_TYPE.contains(type)&&flag< XDocService.respbodyLevel){
-                comment = parser(type,flag+1,paramValue);
+                comment = parser(type,flag+1,paramValue,tType);
             }
             if("List".equals(type)&&flag<XDocService.respbodyLevel){
                 String method= propertyDescriptor.getReadMethod().toGenericString();
                 int star = method.indexOf("<");
                 int end = method.indexOf(">",star);
                 if(paramValue.get(propertyDescriptor.getName())!=null){
-                    String  value = parser(paramValue.get(propertyDescriptor.getName()),flag+1,paramValue);
+                    String  value = parser(paramValue.get(propertyDescriptor.getName()),flag+1,paramValue,tType);
                     comment = "["+value+","+value+",...]";
                 }else if(star>0&&end>0){
                     String path = method.substring(star+1,end);
-                    String  value = parser(path,flag+1,paramValue);
+                    if("T".equals(path)){
+                        path = tType;
+                    }
+                    String  value = parser(path,flag+1,paramValue,tType);
                     comment = "["+value+value+",...]";
                 }
             }

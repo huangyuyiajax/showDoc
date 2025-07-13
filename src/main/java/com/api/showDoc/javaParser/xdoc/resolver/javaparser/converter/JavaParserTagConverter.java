@@ -19,5 +19,9 @@ public interface JavaParserTagConverter<T extends String> {
      */
     DocTag converter(T o) ;
 
+    DocTag converter(T o,String tType) ;
+
     DocTag converter(T o,Integer i) ;
+
+    DocTag converter(String comment,Integer i,String tType);
 }
