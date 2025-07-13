@@ -12,13 +12,50 @@ import java.util.List;
 public class ResultModel {
 
     /**
+     * 类简要描述
+     */
+    private String description = "";
+
+    //类创建人员
+    private String author = "";
+    /**
+     * 类创编写时间
+     */
+    private String date = "";
+    /**
      * 业务模块的描述
      */
     private String comment;
-
+    /**
+     * 类名称
+     */
     private String controName;
 
     private List<ShowdocModel> list;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getComment() {
         return comment;

@@ -14,6 +14,17 @@ import java.util.List;
 public class ApiModule {
 
     /**
+     * 类简要描述
+     */
+    private String description = "";
+
+    //类创建人员
+    private String author = "";
+    /**
+     * 类创编写时间
+     */
+    private String date = "";
+    /**
      * 源码在哪个类
      */
     @JsonIgnore
@@ -28,6 +39,30 @@ public class ApiModule {
      * 此业务模块下有哪些接口
      */
     private List<ApiAction> apiActions = new LinkedList<ApiAction>();
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public Class<?> getType() {
         return type;

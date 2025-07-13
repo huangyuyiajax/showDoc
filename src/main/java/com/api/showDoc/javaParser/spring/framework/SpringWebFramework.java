@@ -40,6 +40,10 @@ public class SpringWebFramework implements Framework {
         for (ApiModule apiModule : apiModules) {
             SpringApiModule sam = new SpringApiModule();
 
+            sam.setAuthor(apiModule.getAuthor());
+            sam.setDate(apiModule.getDate());
+            sam.setDescription(apiModule.getDescription());
+
             sam.setComment(apiModule.getComment());
             sam.setType(apiModule.getType());
             boolean isjson = this.isJson(apiModule.getType());

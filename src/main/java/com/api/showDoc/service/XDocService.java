@@ -75,6 +75,10 @@ public class XDocService {
             for(ApiModule apiModule:apiModules){
                 ResultModel resultModel = new ResultModel();
                 String comment = apiModule.getComment();//业务模块的描述
+                resultModel.setAuthor(apiModule.getAuthor());
+                resultModel.setDescription(apiModule.getDescription());
+                resultModel.setDate(apiModule.getDate());
+                resultModel.setAuthor(apiModule.getAuthor());
                 resultModel.setComment(comment);
                 resultModel.setControName(apiModule.getType().getSimpleName());
                 List<ApiAction> apiActions = apiModule.getApiActions();//此业务模块下有哪些接口  相当一个controller类 下一个方法
@@ -82,10 +86,8 @@ public class XDocService {
                 List<ShowdocModel> showdocModels = new ArrayList();
 //                String canonicalName = apiModule.getType().getCanonicalName();
                 for(ApiAction apiAction:apiActions){
-                    String page_title = StringUtils.isNotBlank(apiAction.getComment())?apiAction.getComment():apiAction.getName();
                     try{
                         ShowdocModel showdocModel = new ShowdocModel();
-                        showdocModel.setPageTitle(page_title);
                         showdocModel.setFuntionName(apiAction.getName());
                         for(DocTag docTag: apiAction.getDocTags()){
                             switch(docTag.getTagName()){
@@ -115,6 +117,8 @@ public class XDocService {
                                     break;
                             }
                         }
+                        String page_title = StringUtils.isNotBlank(apiAction.getComment())?apiAction.getComment():(StringUtils.isNotBlank(showdocModel.getDescription())?showdocModel.getDescription():apiAction.getName());
+                        showdocModel.setPageTitle(page_title);
                         SpringApiAction springApiAction = (SpringApiAction)apiAction;
                         if(springApiAction.getRequiresPermissions()!=null){
                             showdocModel.setRequiresPermissions(springApiAction.getRequiresPermissions());

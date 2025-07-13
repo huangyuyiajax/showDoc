@@ -6,7 +6,7 @@
     <title>接口文档</title>
     <style>
         .container { display: flex; height: 98vh; }
-        .left-menu { width: 400px; background: #2c3e50; color: white; }
+        .left-menu { width: 450px; background: #2c3e50; color: white; }
         .menu-item { padding: 12px 15px; border-bottom: 1px solid #34495e; cursor: pointer; }
         .menu-item:hover { background: #34495e; }
         .submenu { display: none; background: #1a252f; }
@@ -86,7 +86,7 @@
     <ul>
         {{each list v i}}
         <li class="menu-item has-submenu">
-            {{v.comment?v.comment:v.controName}}
+            {{v.comment?v.comment:(v.description?v.description:v.controName)}}
             <ul class="submenu">
                 {{each v.list w j}}
                 <li data-target="panel{{i}}-{{j}}" title="{{w.pageTitle?w.pageTitle:w.funtionName}}">{{w.pageTitle?w.pageTitle:w.funtionName}}</li>
