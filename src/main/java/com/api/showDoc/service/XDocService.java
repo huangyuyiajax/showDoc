@@ -36,7 +36,21 @@ public class XDocService {
     @Value("${xDocPath:}")
     private String xDocPath;
 
+    public static int paramLevel = 4;
+
+    public static int respbodyLevel = 2;
+
     private static ApiDoc apiDoc;
+
+    @Value("${paramLevel:4}")
+    public void setParamLevel(int val) {
+        paramLevel = val;
+    }
+
+    @Value("${respbodyLevel:4}")
+    public void setRespbodyLevel(int val) {
+        respbodyLevel = val;
+    }
 
     /**
      * 获取所有文档api

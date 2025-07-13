@@ -7,6 +7,7 @@ import com.api.showDoc.javaParser.xdoc.tag.SeeTagImpl;
 import com.api.showDoc.javaParser.xdoc.utils.ClassMapperUtils;
 import com.api.showDoc.javaParser.xdoc.utils.CommentUtils;
 import com.api.showDoc.javaParser.xdoc.utils.Constant;
+import com.api.showDoc.service.XDocService;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -31,9 +32,6 @@ import java.util.*;
 public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
 
     private Logger log = LoggerFactory.getLogger(SeeTagConverter.class);
-
-    //递归解析多少层
-    private int paramLevel = 4;
 
     @Override
     public DocTag converter(String comment) {
@@ -192,14 +190,14 @@ public class SeeTagConverter extends DefaultJavaParserTagConverterImpl {
             field.setRequire(require);
             String returnTypeSimpleNameType = propertyDescriptor.getType().getSimpleName();
 
-            if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)&&i<paramLevel){
+            if(!Constant.DATA_TYPE.contains(returnTypeSimpleNameType)&&i< XDocService.paramLevel){
                 JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");
                 SeeTagImpl tag = (SeeTagImpl)converter.converter("@see "+returnTypeSimpleNameType,i+1);
                 if(tag!=null){
                     field.setFieldInfos(tag.getValues().getFieldInfos());
                 }
             }
-            if(Constant.LIST_TYPE.contains(returnTypeSimpleNameType)&&i<paramLevel){
+            if(Constant.LIST_TYPE.contains(returnTypeSimpleNameType)&&i<XDocService.paramLevel){
                 // 获取泛型参数类型
                 Type genericType = propertyDescriptor.getGenericType();
                 if (genericType instanceof ParameterizedType) {

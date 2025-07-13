@@ -1,5 +1,7 @@
 xDoc: true  # 是否启用
 xDocPath: #src\main\java\com\api\showDoc\controller\
+paramLevel: 4 # 解析实体类层级数
+respbodyLevel: 2 # 解析返回示例实体类层级数
 # Tomcat
 server:
     tomcat:

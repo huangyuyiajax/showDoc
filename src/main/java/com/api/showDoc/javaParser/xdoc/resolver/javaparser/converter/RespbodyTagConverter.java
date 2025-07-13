@@ -6,6 +6,7 @@ import com.api.showDoc.javaParser.xdoc.tag.SeeTagImpl;
 import com.api.showDoc.javaParser.xdoc.utils.ClassMapperUtils;
 import com.api.showDoc.javaParser.xdoc.utils.CommentUtils;
 import com.api.showDoc.javaParser.xdoc.utils.Constant;
+import com.api.showDoc.service.XDocService;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -28,9 +29,6 @@ import java.util.*;
 public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
 
     private Logger log = LoggerFactory.getLogger(RespbodyTagConverter.class);
-
-    //递归解析多少层
-    private int respbodyLevel = 2;
 
     @Override
     public DocTagImpl converter(String comment) {
@@ -189,10 +187,10 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
             }
             String type = propertyDescriptor.getPropertyType().getSimpleName();
             String comment = commentMap.get(propertyDescriptor.getName());
-            if(!Constant.DATA_TYPE.contains(type)&&flag<respbodyLevel){
+            if(!Constant.DATA_TYPE.contains(type)&&flag< XDocService.respbodyLevel){
                 comment = parser(type,flag+1,paramValue);
             }
-            if("List".equals(type)&&flag<respbodyLevel){
+            if("List".equals(type)&&flag<XDocService.respbodyLevel){
                 String method= propertyDescriptor.getReadMethod().toGenericString();
                 int star = method.indexOf("<");
                 int end = method.indexOf(">",star);
