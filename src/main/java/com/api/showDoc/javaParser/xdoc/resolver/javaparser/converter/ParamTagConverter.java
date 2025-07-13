@@ -23,7 +23,7 @@ public class ParamTagConverter extends DefaultJavaParserTagConverterImpl {
             docTag.setTagName("@params");
             return docTag;
         }
-        if("@resp".equals(docTag.getTagName())&&val.matches("[A-Z][a-zA-Z]*")){
+        if("@resp".equals(docTag.getTagName())&&val.matches("[A-Z][a-zA-Z0-9]*")){
             //如果不是基本数据类型，则是对象  使用@see解析
             if(!Constant.DATA_TYPE.contains(val)){
                 JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");

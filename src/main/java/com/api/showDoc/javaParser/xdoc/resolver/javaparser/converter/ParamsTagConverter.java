@@ -27,7 +27,7 @@ public class ParamsTagConverter extends DefaultJavaParserTagConverterImpl {
         String[] strings  =values.replace("[", "").replace("]", "").split(",");
         List<FieldInfo> fields = new ArrayList<FieldInfo>();
         for(String val:strings){
-            if(val.matches("[A-Z][a-zA-Z]*")){
+            if(val.matches("[A-Z][a-zA-Z0-9]*")){
                 //如果不是基本数据类型，则是对象  使用@see解析
                 if(!Constant.DATA_TYPE.contains(val)){
                     JavaParserTagConverter converter = JavaParserTagConverterRegistrar.getInstance().getConverter("@see");

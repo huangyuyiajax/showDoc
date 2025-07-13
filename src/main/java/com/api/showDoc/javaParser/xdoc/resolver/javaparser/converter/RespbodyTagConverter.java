@@ -43,7 +43,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
         if("|void|".equals(values)){
             return new DocTagImpl(docTag.getTagName(),"");
         }
-        if(values.matches("[A-Z][a-zA-Z]*")){
+        if(values.matches("[A-Z][a-zA-Z0-9]*")){
             values = "|"+values+"|";
         }
         String[] strings = values.split("\\|");
@@ -57,7 +57,7 @@ public class RespbodyTagConverter extends DefaultJavaParserTagConverterImpl {
             if(indexValue>0){
                 path = value.substring(0,indexValue);
             }
-            if(path.matches("[a-zA-Z]+")){
+            if(path.matches("[A-Z][a-zA-Z0-9]*")){
                 int indexValue2 = value.indexOf(")");
                 if(indexValue2>0){
                     param = value.substring(indexValue+1,value.length()-1);
