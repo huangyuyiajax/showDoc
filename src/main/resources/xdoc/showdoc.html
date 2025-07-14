@@ -152,7 +152,7 @@
                     {{if column.fieldInfos&&column.fieldInfos.length>0}}
                     {{each column.fieldInfos column2 k}}
                     <tr>
-                        <td>&emsp;{{column2.name}}</td>
+                        <td>┗{{column2.name}}</td>
                         {{if column2.require}}
                         <td class="param-required">是</td>
                         {{else}}
@@ -164,7 +164,7 @@
                         {{if column2.fieldInfos&&column2.fieldInfos.length>0}}
                         {{each column2.fieldInfos column3 h}}
                         <tr>
-                            <td>&emsp;&emsp;{{column3.name}}</td>
+                            <td>┗━{{column3.name}}</td>
                             {{if column3.require}}
                             <td class="param-required">是</td>
                             {{else}}
@@ -176,7 +176,7 @@
                             {{if column3.fieldInfos&&column3.fieldInfos.length>0}}
                             {{each column3.fieldInfos column4 l}}
                             <tr>
-                                <td>&emsp;&emsp;&emsp;{{column4.name}}</td>
+                                <td>┗━━{{column4.name}}</td>
                                 {{if column4.require}}
                                 <td class="param-required">是</td>
                                 {{else}}
@@ -188,7 +188,7 @@
                                 {{if column4.fieldInfos&&column4.fieldInfos.length>0}}
                                 {{each column4.fieldInfos column5 m}}
                                 <tr>
-                                    <td>&emsp;&emsp;&emsp;&emsp;{{column5.name}}</td>
+                                    <td>┗━━━{{column5.name}}</td>
                                     {{if column5.require}}
                                     <td class="param-required">是</td>
                                     {{else}}
@@ -244,28 +244,28 @@
                     {{if column.fieldInfos&&column.fieldInfos.length>0}}
                     {{each column.fieldInfos column2 k}}
                     <tr>
-                        <td>&emsp;{{column2.name}}</td>
+                        <td>┗{{column2.name}}</td>
                         <td>{{column2.simpleTypeName}}</td>
                         <td>{{column2.comment?column2.comment:'无'}}</td>
                     </tr>
                         {{if column2.fieldInfos&&column2.fieldInfos.length>0}}
                         {{each column2.fieldInfos column3 h}}
                         <tr>
-                            <td>&emsp;&emsp;{{column3.name}}</td>
+                            <td>┗━{{column3.name}}</td>
                             <td>{{column3.simpleTypeName}}</td>
                             <td>{{column3.comment?column3.comment:'无'}}</td>
                         </tr>
                             {{if column3.fieldInfos&&column3.fieldInfos.length>0}}
                             {{each column3.fieldInfos column4 l}}
                             <tr>
-                                <td>&emsp;&emsp;&emsp;{{column4.name}}</td>
+                                <td>┗━━{{column4.name}}</td>
                                 <td>{{column4.simpleTypeName}}</td>
                                 <td>{{column4.comment?column4.comment:'无'}}</td>
                             </tr>
                                 {{if column4.fieldInfos&&column4.fieldInfos.length>0}}
                                 {{each column4.fieldInfos column5 m}}
                                 <tr>
-                                    <td>&emsp;&emsp;&emsp;&emsp;{{column5.name}}</td>
+                                    <td>┗━━━{{column5.name}}</td>
                                     <td>{{column5.simpleTypeName}}</td>
                                     <td>{{column5.comment?column5.comment:'无'}}</td>
                                 </tr>
